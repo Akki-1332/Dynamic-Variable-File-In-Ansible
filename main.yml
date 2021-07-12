@@ -1,0 +1,23 @@
+- hosts: all
+  vars_files:
+  - "{{ ansible_facts['distribution'] }}.yml"
+  tasks:
+  - name: "httpd isntall"
+    package:
+            name: "{{ package_name }}"
+            state: present
+
+  - name: "copy data for webserver "
+    copy:
+            dest: "/var/www/html/index.html"
+            content: "webserver in <b> {{ ansible_facts['distribution'] }} </b>"
+
+  - name: "httpd start"
+    service:
+            name: "{{ service_name }}"
+            state: started
+    when: ansible_facts["distribution"] == "RedHat"
+
+  - name: "container httpd start"
+    command: "/usr/sbin/httpd"
+    when: ansible_facts["distribution"] == "CentOS"
